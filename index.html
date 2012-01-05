@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+
+<head>
+<title>Cyclozzo</title>
+<meta charset="UTF-8" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="author" content="Sreejith K" />
+
+<link rel="alternate" href="http://feeds2.feedburner.com/foobarnbaz"
+  title="foobarnbaz.com" type="application/atom+xml" />
+<link rel="stylesheet" href="/css/screen.css" type="text/css" />
+<link rel="stylesheet" href="/css/pygments.css" type="text/css" />
+<link href='/images/layout/favicon.ico' rel='shortcut icon' type='image/ico' />
+<link href=' http://fonts.googleapis.com/css?family=Molengo' rel='stylesheet' type='text/css' />
+<link href=' http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css' />
+
+<!--[if lte IE 8]>
+<script type="text/javascript">
+  // Create elements here allows IE8 to style them when it sees the real thing.
+  document.createElement('article');
+  document.createElement('aside');
+  document.createElement('footer');
+  document.createElement('header');
+  document.createElement('hgroup');
+  document.createElement('menu');
+  document.createElement('nav');
+  document.createElement('section');
+</script>
+<![endif]-->
+</head>
+
+<body>
+
+<div id="container" style="position: relative">
+
+
+<h1>Cyclozzo</h1>
+<h2>Architecture</h2>
+<p>A Cloud in Cyclozzo's terms is a cluster, running services which manage database, file system, and application instances. Cyclozzo has  a System Cloud exclusively to manage other Application clouds (Application Clouds host your GAE Compatible apps). Each Cloud can be configured to have its own Load Balancer with fail over. Applications hosted can have their own public domain names using any preferred third party DNS service. </p>
+<p><img alt="Cyclozzo Architecture" src="/images/arch.png" /></p>
+<h2>System/Management Cloud</h2>
+<ul>
+<li>What it does?</li>
+</ul>
+<p>System Cloud's main functionality is to deploy Application Clouds, which involves PXE booting a set of machines and associating them with roles (Manager/AppServer).</p>
+<ul>
+<li>
+<p>Services</p>
+<ol>
+<li>Cyclozzo Master is an interface which enables Application Clouds to communicate with System Cloud using RPC.</li>
+<li>DHCP Service leases IP's to PXE booted machines based on user configuration.</li>
+<li>Statistics Collector catalogs critical resource usage information from each Application servers.</li>
+<li>Cyclozzo Console/UI – Cloud Administration Web front-end.</li>
+</ol>
+</li>
+</ul>
+<h2>System Requirement</h2>
+<ul>
+<li>Two machines for Master with fail-over and Console.</li>
+<li>At least five machines for a distributed database and file system with high-availability and fail-over.</li>
+</ul>
+<p><em>Though Cyclozzo could be run in just two machine cluster. We recommend the specs mentioned above.</em></p>
+<p>Machine Configuration goes here...</p>
+<h2>Application Cloud</h2>
+<ul>
+<li>What it does?</li>
+</ul>
+<p>Manages application instances and reports stats to System cloud.</p>
+<ul>
+<li>
+<p>Services</p>
+<ol>
+<li>Manager scales applications based on load calculated from stats reported by Load Balancer. An Application cloud runs a single instance of Manager service with fail-over.</li>
+<li>Satellite service runs all application servers. They start/stop instances as required by Manager service.</li>
+</ol>
+</li>
+</ul>
+<h2>System Requirement</h2>
+<ul>
+<li>Two machines for Manager with fail-over</li>
+<li>At least five machines for a distributed database and file system with high-availability and fail-over.</li>
+<li>Additional machines will host applications and take part in data replication.</li>
+</ul>
+<p>[FILL UP MACHINE CONFIG HERE]</p>
+<p><img alt="Cyclozzo Architecture" src="/images/setup.png" /></p>
+<h1>Cyclozzo OSE</h1>
+<h2>About Cyclozzo OSE</h2>
+<p>Introduction goes here....</p>
+<h2>Building Cyclozzo</h2>
+<p>Cyclozzo's build system can build <code>deb</code> packages from the sources. Once you have all the dependencies ready in the <code>deps</code> directory, do </p>
+<div class="codehilite"><pre><span class="n">cd</span> <span class="n">buildbot</span>
+<span class="n">make</span> <span class="n">all</span>
+</pre></div>
+
+
+<p>and publish the debian repository,</p>
+<div class="codehilite"><pre><span class="n">make</span> <span class="n">publish</span>
+</pre></div>
+
+
+<p>Now you'll have an <code>apt</code> repository with all the packages and dependencies under <code>repo</code> directory.</p>
+<div class="codehilite"><pre><span class="n">ls</span> <span class="o">../</span><span class="n">repo</span>
+<span class="n">i386</span>    <span class="n">all</span>     <span class="n">x86_64</span>
+</pre></div>
+
+
+<p>You have to add the <code>repo</code> directory to have FTP access so that <code>apt</code> can access the packages.</p>
+<h2>Deploying Cyclozzo</h2>
+<p>Once the repository is ready, you can add the repository url to all the cluster nodes and install Cyclozzo</p>
+<div class="codehilite"><pre><span class="n">sudo</span> <span class="n">add</span><span class="o">-</span><span class="n">apt</span><span class="o">-</span><span class="n">repository</span> <span class="s">&#39;deb ftp://&lt;REPOSITORY-ADDRESS-HERE&gt;/all  /&#39;</span>
+<span class="n">sudo</span> <span class="n">add</span><span class="o">-</span><span class="n">apt</span><span class="o">-</span><span class="n">repository</span> <span class="s">&#39;deb ftp://&lt;REPOSITORY-ADDRESS-HERE&gt;/x86_64  /&#39;</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">cyclozzo</span><span class="o">-</span><span class="n">ose</span>
+</pre></div>
+
+
+<p>NOTE: You may need to enter a password for SSH keys generated during installation. Leave it empty for passwordless SSH access.</p>
+<h2>Configuring Cyclozzo cluster</h2>
+<p>First of all you need to select a master node. This is the node from where you control all the other nodes and run commands. Once you are on the master node, issue</p>
+<div class="codehilite"><pre><span class="n">sudo</span> <span class="n">nano</span> <span class="sb">`cyclozzo --settings`</span>
+</pre></div>
+
+
+<p>and change the master and slave node ip addresses. Then do,</p>
+<div class="codehilite"><pre><span class="n">cyclozzo</span> <span class="o">--</span><span class="n">exchange</span><span class="o">-</span><span class="nb">keys</span>
+</pre></div>
+
+
+<p>to exchange the SSH keys generated during installation to all the slave nodes.</p>
+<p>Now, its time to configure/format the cluster</p>
+<div class="codehilite"><pre><span class="n">cyclozzo</span> <span class="o">--</span><span class="n">configure</span> <span class="o">--</span><span class="nb">format</span> <span class="n">all</span>
+</pre></div>
+
+
+<h2>Starting Cyclozzo cluster</h2>
+<div class="codehilite"><pre><span class="n">cyclozzo</span> <span class="o">--</span><span class="n">start</span> <span class="n">cluster</span>
+</pre></div>
+
+
+<h2>Starting applications</h2>
+<div class="codehilite"><pre><span class="n">cyclozzo</span> <span class="o">--</span><span class="n">start</span> <span class="n">application</span> <span class="o">--</span><span class="n">dir</span> <span class="n">guestbook</span><span class="o">/</span> <span class="o">--</span><span class="n">port</span> <span class="mi">8080</span>
+</pre></div>
+
+
+<h2>About Stackless Recursion</h2>
+<p>Please visit <a href="http://gostackless.com/">http://gostackless.com/</a></p>
+
+
+<div class="footer">Powered by <a href="https://github.com/semk/voldemort">Voldemort</a></div>
+
+</div>
+
+</body>
+
+</html>

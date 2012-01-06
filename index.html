@@ -59,9 +59,9 @@
 <h2>System Requirement</h2>
 <ul>
 <li>Two machines for Master with fail-over and Console.</li>
-<li>At least five machines for a distributed database and file system with high-availability and fail-over.</li>
+<li>At least five machines for our distributed database and file system with high-availability and fail-over.</li>
 </ul>
-<p><em>Though Cyclozzo could be run in just two machine cluster. We recommend the specs mentioned above.</em></p>
+<p><em>Although Cyclozzo could be configured to run in just two machine cluster, We recommend the specs mentioned above.</em></p>
 <p>Machine Configuration goes here...</p>
 <h2>Application Cloud</h2>
 <ul>
@@ -83,14 +83,19 @@
 <li>At least five machines for a distributed database and file system with high-availability and fail-over.</li>
 <li>Additional machines will host applications and take part in data replication.</li>
 </ul>
-<p>[FILL UP MACHINE CONFIG HERE]</p>
+<p>Machine configuration goes here...</p>
 <p><img alt="Cyclozzo Architecture" src="/images/setup.png" /></p>
 <h1>Cyclozzo OSE</h1>
 <h2>About Cyclozzo OSE</h2>
-<p>Introduction goes here....</p>
+<p>Cyclozzo's Opensource Edition allows you to run Google App Engine compatible applications in a distributed environment. It lacks the features of the proprietary version such as automatic scaling, metrics collection, management UI etc. Using Cyclozzo OSE, you will be able to create a cluster where you can host your applications.</p>
+<h2>Getting sources</h2>
+<div class="codehilite"><pre><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nv">@github</span><span class="o">.</span><span class="n">com:cyclozzo</span><span class="o">/</span><span class="n">cyclozzo</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+
+
 <h2>Building Cyclozzo</h2>
 <p>Cyclozzo's build system can build <code>deb</code> packages from the sources. Once you have all the dependencies ready in the <code>deps</code> directory, do </p>
-<div class="codehilite"><pre><span class="n">cd</span> <span class="n">buildbot</span>
+<div class="codehilite"><pre><span class="n">cd</span> <span class="n">cyclozzo</span><span class="o">/</span><span class="n">buildbot</span>
 <span class="n">make</span> <span class="n">all</span>
 </pre></div>
 
@@ -134,6 +139,7 @@
 </pre></div>
 
 
+<p>This command synchronizes the configuration across all the nodes cleans Hadoop Filesystem and Hypertable databases.</p>
 <h2>Starting Cyclozzo cluster</h2>
 <div class="codehilite"><pre><span class="n">cyclozzo</span> <span class="o">--</span><span class="n">start</span> <span class="n">cluster</span>
 </pre></div>
